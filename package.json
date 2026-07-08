@@ -1,0 +1,16 @@
+{
+  "name": "zuno",
+  "private": true,
+  "scripts": {
+    "backend": "cd Backend && npm start",
+    "dashboard": "cd dashboard && npm start",
+    "frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run backend\" \"npm run dashboard\" \"npm run frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "dependencies": {
+    "passport-local-mongoose": "^9.1.0"
+  }
+}

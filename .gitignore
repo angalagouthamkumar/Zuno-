@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.local
+.env.production
+build/
+dist/node_modules/
+.env
+build/
+dist/
