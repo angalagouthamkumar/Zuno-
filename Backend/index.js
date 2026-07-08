@@ -10,7 +10,7 @@ const axios = require("axios");
 const { HoldingsModel } = require("./model/holdingsModel");
 const { PositionModel } = require("./model/positionModel");
 const { OrderModel } = require("./model/ordersModel");
-const authRoutes = require("./Routes/authRoutes"); 
+const authRoutes = require("./Routes/authRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const marketController = require("./controllers/marketController");
 
