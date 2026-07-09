@@ -23,28 +23,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL,   // e.g., https://zuno.com
-  process.env.DASHBOARD_URL   // e.g., https://dashboard.zuno.com
+  process.env.FRONTEND_URL,   // https://zuno-ee9u.vercel.app (NO trailing slash)
+  process.env.DASHBOARD_URL   // https://zuno-dd7j.vercel.app (NO trailing slash)
 ];
-
-// const allowedOrigins = [
-//   'https://zuno-ee9u.vercel.app',                 // Your Landing Page
-//   'https://your-dashboard-url.vercel.app'          // Your Dashboard Page
-// ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
+    
+    // Normalize both origin and strings to prevent subtle trailing slash or white space errors
+    const cleanedOrigin = origin.trim().replace(/\/$/, "");
+    const matched = allowedOrigins.some(o => o && o.trim().replace(/\/$/, "") === cleanedOrigin);
+
+    if (!matched) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
   },
-  credentials: true // Crucial if you are passing JWT tokens or cookies
+  credentials: true
 }));
-
 
 app.use("/api/auth", authRoutes);
 

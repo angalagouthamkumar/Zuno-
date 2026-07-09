@@ -65,10 +65,11 @@ exports.loginUser = async (req, res) => {
         user.refreshToken = refreshToken;
         await user.save();
 
+        // FIX: Enforced strict HTTPS cookie configurations for separate domain communication
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,        // Force true because Render is hosted on HTTPS
+            sameSite: "none",    // Cross-site allowed
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -109,7 +110,12 @@ exports.logoutUser = async (req, res) => {
         if (token) {
             await User.findOneAndUpdate({ refreshToken: token }, { $unset: { refreshToken: 1 } });
         }
-        res.clearCookie("refreshToken", { httpOnly: true, sameSite: "lax" });
+        // FIX: Clear matched cookie options securely
+        res.clearCookie("refreshToken", { 
+            httpOnly: true, 
+            secure: true,
+            sameSite: "none" 
+        });
         return res.status(200).json({ success: true, message: "Session cleared successfully." });
     } catch (err) {
         return res.status(500).json({ success: false, message: err.message });
