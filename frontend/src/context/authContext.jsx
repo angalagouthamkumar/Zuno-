@@ -5,6 +5,9 @@ const AuthContext = createContext(null);
 
 axios.defaults.withCredentials = true;
 
+// Dynamically points to Render in production, or localhost during development
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
@@ -12,7 +15,7 @@ export function AuthProvider({ children }) {
 
     const refreshAccessToken = async () => {
         try {
-            const res = await axios.post("http://localhost:3002/api/auth/refresh");
+            const res = await axios.post(`${API_URL}/api/auth/refresh`);
             setToken(res.data.accessToken);
             return res.data.accessToken;
         } catch (err) {
@@ -27,7 +30,7 @@ export function AuthProvider({ children }) {
             try {
                 const activeToken = await refreshAccessToken();
                 if (activeToken) {
-                    const res = await axios.get("http://localhost:3002/api/auth/me", {
+                    const res = await axios.get(`${API_URL}/api/auth/me`, {
                         headers: { Authorization: `Bearer ${activeToken}` }
                     });
                     setUser(res.data.user);
@@ -46,12 +49,8 @@ export function AuthProvider({ children }) {
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
-                
-                // Extract the path securely to prevent absolute vs relative mismatches
                 const requestPath = originalRequest.url ? originalRequest.url.toLowerCase() : "";
 
-                // TRAP: If the error came from an authentication endpoint, REJECT IMMEDIATELY.
-                // This prevents the login form from ever looping on a 401 bad password/email error!
                 if (
                     requestPath.includes("/auth/login") || 
                     requestPath.includes("/auth/signup") || 
@@ -60,7 +59,6 @@ export function AuthProvider({ children }) {
                     return Promise.reject(error);
                 }
 
-                // For all other protected trading resource endpoints, attempt an in-memory token refresh
                 if (error.response?.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
                     const newToken = await refreshAccessToken();
@@ -76,19 +74,19 @@ export function AuthProvider({ children }) {
     }, []);
 
     const login = async (email, password) => {
-        const res = await axios.post("http://localhost:3002/api/auth/login", { email, password });
+        const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
         setToken(res.data.accessToken);
         setUser(res.data.user);
         return res.data;
     };
 
     const signup = async (username, email, password) => {
-        const res = await axios.post("http://localhost:3002/api/auth/signup", { username, email, password });
+        const res = await axios.post(`${API_URL}/api/auth/signup`, { username, email, password });
         return res.data;
     };
 
     const logout = async () => {
-        await axios.post("http://localhost:3002/api/auth/logout");
+        await axios.post(`${API_URL}/api/auth/logout`);
         setToken(null);
         setUser(null);
     };

@@ -30,9 +30,11 @@ export default function Login() {
     try {
         const data = await login(form.email, form.password);
         
+        // Inside Login.jsx -> handleSubmit
         if (data && (data.success || data.accessToken)) {
             setLoading(false);
-            window.location.href = "http://localhost:3000/";
+            // CHANGE THIS from localhost to your live production Dashboard Link:
+            window.location.href = "https://zuno-dd7j.vercel.app/";
         } else {
             setError("Server validation completed with an irregular payload.");
             setLoading(false);

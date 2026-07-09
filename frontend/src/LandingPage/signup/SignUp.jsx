@@ -6,7 +6,7 @@ import "../Styles/auth.css";
 
 export default function Signup() {
     const navigate = useNavigate();
-    const { signup } = useAuth();
+    const { signup, login } = useAuth();
 
     const [form, setForm] = useState({
         username: "",
@@ -36,17 +36,20 @@ export default function Signup() {
     setLoading(true);
     try {
         const data = await signup(form.username, form.email, form.password);
-        if (data.success) {
-            alert("Account created successfully!");
-            
-            try {
-                await login(form.email, form.password);
-                window.location.href = "http://localhost:3000/";
-            } catch (loginErr) {
-                window.location.href = "http://localhost:3000/";
+        // Inside Signup.jsx -> handleSubmit
+            if (data.success) {
+                alert("Account created successfully!");
+
+                try {
+                    await login(form.email, form.password);
+                    // CHANGE THIS:
+                    window.location.href = "https://zuno-dd7j.vercel.app/";
+                } catch (loginErr) {
+                    // CHANGE THIS TOO:
+                    window.location.href = "https://zuno-dd7j.vercel.app/";
+                }
             }
-        }
-    } catch (err) {
+            } catch (err) {
         setError(err.response?.data?.message || "Signup failed. Try again.");
     } finally {
         setLoading(false);
