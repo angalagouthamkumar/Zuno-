@@ -22,9 +22,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// const allowedOrigins = [
+//   process.env.FRONTEND_URL,   // e.g., https://zuno.com
+//   process.env.DASHBOARD_URL   // e.g., https://dashboard.zuno.com
+// ];
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL,   // e.g., https://zuno.com
-  process.env.DASHBOARD_URL   // e.g., https://dashboard.zuno.com
+  'https://zuno-ee9u.vercel.app',                 // Your Landing Page
+  'https://your-dashboard-url.vercel.app'          // Your Dashboard Page
 ];
 
 app.use(cors({
