@@ -25,11 +25,16 @@ export const GeneralContextProvider = (props) => {
       try {
         const refreshRes = await axios.post(`${API_URL}/api/auth/refresh`);
         if (refreshRes.data && refreshRes.data.accessToken) {
+          // Explicitly assign the default common header for any sequential axios lifecycle requests
+          axios.defaults.headers.common["Authorization"] = `Bearer ${refreshRes.data.accessToken}`;
+
           const profileRes = await axios.get(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${refreshRes.data.accessToken}` },
           });
           if (profileRes.data.success) {
             setUser(profileRes.data.user);
+          } else {
+            window.location.href = `${LANDING_PAGE_URL}/login`;
           }
         } else {
           window.location.href = `${LANDING_PAGE_URL}/login`;
