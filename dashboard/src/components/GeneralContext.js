@@ -7,6 +7,9 @@ axios.defaults.withCredentials = true;
 // Create the raw context tracking engine instance
 const GeneralContext = createContext(null);
 
+// Dynamically points to Render in production, or localhost during development
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const LANDING_PAGE_URL = 'https://zuno-ee9u.vercel.app';
 
 export const GeneralContextProvider = (props) => {
   const [isBuyWindowOpen, setIsBuyWindowOpen] = useState(false);
@@ -20,19 +23,19 @@ export const GeneralContextProvider = (props) => {
   useEffect(() => {
     const initializeDashboardAuth = async () => {
       try {
-        const refreshRes = await axios.post("http://localhost:3002/api/auth/refresh");
+        const refreshRes = await axios.post(`${API_URL}/api/auth/refresh`);
         if (refreshRes.data && refreshRes.data.accessToken) {
-          const profileRes = await axios.get("http://localhost:3002/api/auth/me", {
+          const profileRes = await axios.get(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${refreshRes.data.accessToken}` },
           });
           if (profileRes.data.success) {
             setUser(profileRes.data.user);
           }
         } else {
-          window.location.href = "http://localhost:5173/login";
+          window.location.href = `${LANDING_PAGE_URL}/login`;
         }
       } catch (err) {
-        window.location.href = "http://localhost:5173/login";
+        window.location.href = `${LANDING_PAGE_URL}/login`;
       }
     };
     initializeDashboardAuth();

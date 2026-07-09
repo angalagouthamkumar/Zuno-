@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { useGeneralContext } from "./GeneralContext";
 import axios from "axios";
 
+// Dynamically points to Render in production, or localhost during development
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const LANDING_PAGE_URL = 'https://zuno-ee9u.vercel.app';
+
 const Menu = () => {
   const contextValues = useGeneralContext() || {};
   const { user = null, darkMode = false, toggleDarkMode = () => {} } = contextValues;
@@ -39,11 +43,11 @@ const Menu = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:3002/api/auth/logout");
-      window.location.href = "http://localhost:5173/login";
+      await axios.post(`${API_URL}/api/auth/logout`);
+      window.location.href = `${LANDING_PAGE_URL}/login`;
     } catch (err) {
       console.error("Logout request failed:", err);
-      window.location.href = "http://localhost:5173/login";
+      window.location.href = `${LANDING_PAGE_URL}/login`;
     }
   };
 

@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { VerticalGraph } from "./VerticleGraph";
 
+// Dynamically points to Render in production, or localhost during development
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 const Holdings = () => {
   const [holdingsData, setHoldingsData] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3002/allholdings")
+      .get(`${API_URL}/allholdings`)
       .then((response) => {
         setHoldingsData(response.data);
       })

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+// Dynamically points to Render in production, or localhost during development
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 const Positions = () => {
   const [positionsData, setPositionsData] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3002/allpositions")
+      .get(`${API_URL}/allpositions`)
       .then((response) => {
         setPositionsData(response.data);
       })

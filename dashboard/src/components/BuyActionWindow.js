@@ -4,6 +4,9 @@ import axios from "axios";
 import GeneralContext from "./GeneralContext";
 import "./BuyActionWindow.css";
 
+// Dynamically points to Render in production, or localhost during development
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 const BuyActionWindow = ({ uid }) => {
   const [stockQuantity, setStockQuantity] = useState(1);
   const [stockPrice, setStockPrice] = useState(0.0);
@@ -16,7 +19,7 @@ const BuyActionWindow = ({ uid }) => {
     console.log("Buy button clicked. Sending data...");
 
     axios
-      .post("http://localhost:3002/newOrder", {
+      .post(`${API_URL}/newOrder`, {
         name: uid,
         qty: Number(stockQuantity), 
         price: Number(stockPrice),   
@@ -28,7 +31,7 @@ const BuyActionWindow = ({ uid }) => {
       })
       .catch((error) => {
         console.error("Error placing order:", error);
-        alert("Failed to connect to backend server. Is port 3002 running?");
+        alert("Failed to connect to backend server.");
       });
   };
 
