@@ -28,18 +28,25 @@ export const GeneralContextProvider = (props) => {
           // Explicitly assign the default common header for any sequential axios lifecycle requests
           axios.defaults.headers.common["Authorization"] = `Bearer ${refreshRes.data.accessToken}`;
 
-          const profileRes = await axios.get(`${API_URL}/api/auth/me`, {
-            headers: { Authorization: `Bearer ${refreshRes.data.accessToken}` },
-          });
-          if (profileRes.data.success) {
-            setUser(profileRes.data.user);
-          } else {
-            window.location.href = `${LANDING_PAGE_URL}/login`;
+          try {
+            const profileRes = await axios.get(`${API_URL}/api/auth/me`, {
+              headers: { Authorization: `Bearer ${refreshRes.data.accessToken}` },
+            });
+            if (profileRes.data.success) {
+              setUser(profileRes.data.user);
+            } else {
+              console.warn("Profile success flag evaluated to false. Falling back.");
+              window.location.href = `${LANDING_PAGE_URL}/login`;
+            }
+          } catch (profileErr) {
+            // FIX: Safely capture profile errors without instantly triggering a blind redirect loop
+            console.error("Backend accepted the refresh token, but rejected the Access Token at /me:", profileErr.response?.data || profileErr.message);
           }
         } else {
           window.location.href = `${LANDING_PAGE_URL}/login`;
         }
       } catch (err) {
+        console.error("Session initialization completely failed:", err.response?.data || err.message);
         window.location.href = `${LANDING_PAGE_URL}/login`;
       }
     };
